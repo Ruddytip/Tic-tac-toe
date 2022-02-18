@@ -60,9 +60,9 @@ void calculateTurn(HANDLE* hnd, std::string* buffMap, bool flagSymbol){
 	char point = (flagSymbol == 1 ? 'o' : 'x');
 	char pointEnemy = (flagSymbol == 1 ? 'x' : 'o');
 
+	// Если компьютер может совершить победный ход, то он его делает
 	for(int i = 0; i < 9; ++i){		
 		if((*buffMap)[i] != ' ') continue;
-		// Если компьютер может совершить победный ход, то он его делает
 		std::string buffMapTest(*buffMap);
 		buffMapTest[i] = point;
 		int win = checkWin(buffMapTest);
@@ -70,10 +70,14 @@ void calculateTurn(HANDLE* hnd, std::string* buffMap, bool flagSymbol){
 			if(win == 1 && point == 'x'){(*buffMap)[i] = point; return;}
 			if(win == 2 && point == 'o'){(*buffMap)[i] = point; return;}
 		}
-		// Если игрок на следующем ходу может победить, то компьютер блокирует ячейку
-		buffMapTest = (*buffMap);
+	}
+
+	// Если игрок на следующем ходу может победить, то компьютер блокирует ячейку
+	for(int i = 0; i < 9; ++i){		
+		if((*buffMap)[i] != ' ') continue;
+		std::string buffMapTest = (*buffMap);
 		buffMapTest[i] = pointEnemy;
-		win = checkWin(buffMapTest);
+		int win = checkWin(buffMapTest);
 		if(win != 0) {
 			if(win == 1 && point == 'o'){(*buffMap)[i] = point; return;}
 			if(win == 2 && point == 'x'){(*buffMap)[i] = point; return;}
@@ -108,7 +112,6 @@ void inputTurn(HANDLE* hnd, std::string* buffMap, bool flagSymbol){
 			getline(std::cin, move);
 			if(!move.length()) continue;
 			std::cout << move.length();			
-		
 			if(move.length() != 3){
 				error = 0;
 			}else{
@@ -155,64 +158,22 @@ void logicPvE(HANDLE* hnd, std::string* buffMap){
 	}else{
 		std::cout << (flagSymbol == (flagWin == 1) ? "Вы победили!!!\n" : "Вы Проиграли.\n");
 	}
-
 }
 
 void logicPvP(HANDLE* hnd, std::string* buffMap){
+	int flagWin = 0;
 	for(int i = 0; i < 9; ++i){
 		printMap(hnd, *buffMap);
-		int number = i % 2 + 1;		
-		int x(0), y(0);	
-		std::cout << "Ход " << number << " игрока: введите два числа через пробел, положение по оси 'х' и по оси 'у'\n";
-		std::cout << "Левое верхнее поле имеет номер '1;1', правое нижнее '3;3'\n";
-		while(true){
-			int error(-1);
-			std::string errorName[3] = {
-				" значения полей указанны не верно\n",
-				" значения полей могут быть только в пределах от 1 до 3\n",
-				" данное поле уже занято\n"};
-			std::string move("");
-			getline(std::cin, move);
-			if(!move.length()) continue;
-			std::cout << move.length();			
-		
-			if(move.length() != 3){
-				error = 0;
-			}else{
-				std::stringstream iss(move);
-				std::string dx(""), dy("");
-				iss >> dx >> dy;
-				x = std::atoi(dx.c_str());
-				y = std::atoi(dy.c_str());
-				if(x < 1 || x > 3 || y < 1 || y > 3){
-					error = 1;
-				}else{
-					if((*buffMap)[(y - 1) * 3 + (x - 1)] != ' ') error = 2;
-				}
-			}
-			if(error >= 0){
-				printMap(hnd, *buffMap);
-				std::cout << "Ход " << number << " игрока: введите два числа через пробел, положение по оси 'х' и по оси 'у'\n";
-				std::cout << "Левое верхнее поле имеет номер '1;1', правое нижнее '3;3'\n";
-				std::cout << "Ошибка ввода:" << errorName[error];
-			} else{
-				break;
-			}
-		}
-		buffMap[(y - 1) * 3 + (x - 1)] = (number == 1 ? 'x' : 'o');
-		if(checkWin(*buffMap) != 0) break;
+		int flagSymbol = (i % 2 ? 0 : 1);		
+		inputTurn(hnd, buffMap, flagSymbol);
+		flagWin = checkWin(*buffMap);
+		if(flagWin != 0) break;
 	}
 	printMap(hnd, *buffMap);
-	switch (checkWin(*buffMap)){
-	case 1:		
-		std::cout << "Победил первый игрок!!!\n";
-		break;
-	case 2:			
-		std::cout << "Победил второй игрок!!!\n";
-		break;
-	default:
+	if(flagWin == 0){
 		std::cout << "Ничья!!!\n";
-		break;
+	}else{
+		std::cout << (flagWin == 1 ? "Победил первый игрок!!!\n" : "Победил второй  игрок!!!\n");
 	}
 }
 
