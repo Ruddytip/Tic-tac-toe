@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 bool checkEndGame(std::string buffMap, std::string message){
-	std::string question("╒юЄшЄх ё√уЁрЄ№ х∙╕ Ёрч?(y/n)");
+	std::string question("Хотите сыграть ещё раз?(д/н)");
 	std::string answer[2];
 	std::string input;
 	answer[0] = question[question.length() - 4];
@@ -13,7 +13,7 @@ bool checkEndGame(std::string buffMap, std::string message){
 	while(!(input == answer[0] || input == answer[1])){
 		std::cout << "\033[5A";
 		printMap(buffMap);
-		std::cout << "┬тхфшЄх ъюЁЁхъЄэ√х фрээ√х(" << answer[0] << "/" << answer[1] << ")";
+		std::cout << "Введите корректные данные(" << answer[0] << "/" << answer[1] << ")";
 		getline(std::cin, input);
 	}
 	std::cout << "\033[5A";
@@ -21,15 +21,15 @@ bool checkEndGame(std::string buffMap, std::string message){
 }
 
 bool checkPlayer(){
-	return questionTemplate("┬р° ёюяхЁэшъ ъюья№■ЄхЁ шыш тЄюЁющ шуЁюъ?(c/p)");
+	return questionTemplate("Ваш соперник компьютер или второй игрок?(к/и)");
 }
 
 bool checkSymbol(){
-	return questionTemplate("┬√схЁхЄх ёшьтюы, ъюЄюЁ√ь сєфхЄх шуЁрЄ№(x/o)");
+	return questionTemplate("Выберете символ, которым будете играть(х/о)");
 }
 
 bool checkTurn(){
-	return questionTemplate("╞хырхЄх їюфшЄ№ яхЁт√ь?(y/n)");
+	return questionTemplate("Желаете ходить первым?(д/н)");
 }
 
 bool questionTemplate(const std::string question){
@@ -43,7 +43,7 @@ bool questionTemplate(const std::string question){
 	while(!(input == answer[0] || input == answer[1])){
 		std::cout << "\033[1A";
 		std::cout << "\033[8C\033[K";
-		std::cout << "┬тхфшЄх ъюЁЁхъЄэ√х фрээ√х(" << answer[0] << "/" << answer[1] << ")";
+		std::cout << "Введите корректные данные(" << answer[0] << "/" << answer[1] << ")";
 		getline(std::cin, input);
 	}
 	std::cout << "\033[5A";
@@ -78,7 +78,7 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 	char point = (flagSymbol == 1 ? 'o' : 'x');
 	char pointEnemy = (flagSymbol == 1 ? 'x' : 'o');
 
-	// ┼ёыш ъюья№■ЄхЁ ьюцхЄ ёютхЁ°шЄ№ яюсхфэ√щ їюф, Єю юэ хую фхырхЄ
+	// Если компьютер может совершить победный ход, то он его делает
 	for(int i = 0; i < 9; ++i){		
 		if((*buffMap)[i] != ' ') continue;
 		std::string buffMapTest(*buffMap);
@@ -90,7 +90,7 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 		}
 	}
 
-	// ┼ёыш шуЁюъ эр ёыхфє■∙хь їюфє ьюцхЄ яюсхфшЄ№, Єю ъюья№■ЄхЁ сыюъшЁєхЄ  ўхщъє
+	// Если игрок на следующем ходу может победить, то компьютер блокирует ячейку
 	for(int i = 0; i < 9; ++i){		
 		if((*buffMap)[i] != ' ') continue;
 		std::string buffMapTest = (*buffMap);
@@ -102,16 +102,16 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 		}
 	}
 
-	// ╩юья№■ЄхЁ чрэшьрхЄ ётюсюфэ√щ єуюы яЁш тючьюцэюёЄш
+	// Компьютер занимает свободный угол при возможности
 	if((*buffMap)[0] == ' ') {(*buffMap)[0] = point; return;}
 	if((*buffMap)[2] == ' ') {(*buffMap)[2] = point; return;}
 	if((*buffMap)[6] == ' ') {(*buffMap)[6] = point; return;}
 	if((*buffMap)[8] == ' ') {(*buffMap)[8] = point; return;}
 
-	// ╩юья№■ЄхЁ чрэшьрхЄ ЎхэЄЁ яЁш тючьюцэюёЄш
+	// Компьютер занимает центр при возможности
 	if((*buffMap)[4] == ' ') {(*buffMap)[4] = point; return;}
 
-	// ╩юья№■ЄхЁ чрэшьрхЄ ётюсюфэє■ ёЄюЁюэє яЁш тючьюцэюёЄш
+	// Компьютер занимает свободную сторону при возможности
 	for(int i = 1; i < 8; i+=2)
 		if((*buffMap)[i] == ' ') {(*buffMap)[i] = point; return;}
 }
@@ -120,9 +120,9 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 	int x(0), y(0), error(-1);
 		while(true){
 			std::string errorName[3] = {
-				" чэрўхэш  яюыхщ єърчрээ√ эх тхЁэю\n",
-				" чэрўхэш  яюыхщ ьюуєЄ с√Є№ Єюы№ъю т яЁхфхырї юЄ 1 фю 3\n",
-				" фрээюх яюых єцх чрэ Єю\n"};
+				" значения полей указанны не верно\n",
+				" значения полей могут быть только в пределах от 1 до 3\n",
+				" данное поле уже занято\n"};
 			std::string move("");
 			getline(std::cin, move);
 			std::cout << (error >= 0 ? "\033[6A" : "\033[5A");
@@ -143,8 +143,8 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 				}
 			}
 			if(error >= 0){
-				std::cout << "\r\033[8C╬°шсър ттюфр:" << errorName[error];
-				std::cout << "\r\033[8C╧ютЄюЁшЄх яюя√Єъє ттюфр: ";
+				std::cout << "\r\033[8CОшибка ввода:" << errorName[error];
+				std::cout << "\r\033[8CПовторите попытку ввода: ";
 			} else{
 				break;
 			}
@@ -161,7 +161,7 @@ bool logicPvE(){
 	for(int i = 0; i < buffMap.length(); ++i){
 		if(flagTurn != (i % 2)){
 			printMap(buffMap);
-			std::cout << "┬р° їюф: ";
+			std::cout << "Ваш ход: ";
 			inputTurn(&buffMap, flagSymbol);
 		}else{
 			calculateTurn(&buffMap, flagSymbol);
@@ -171,9 +171,9 @@ bool logicPvE(){
 	}
 	std::string message;
 	switch (flagWin){
-	case 0: message = "═шў№ !!!\n"; break;
-	case 1: message = (flagSymbol == 1 ? "┬√ яюсхфшыш!!!\n" : "┬√ ╧ЁюшуЁрыш.\n"); break;
-	case 2: message = (flagSymbol == 2 ? "┬√ яюсхфшыш!!!\n" : "┬√ ╧ЁюшуЁрыш.\n"); break;
+	case 0: message = "Ничья!!!\n"; break;
+	case 1: message = (flagSymbol == 1 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
+	case 2: message = (flagSymbol == 2 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
 	}
 	return checkEndGame(buffMap, message);
 }
@@ -184,25 +184,25 @@ bool logicPvP(){
 	for(int i = 0; i < buffMap.length(); ++i){
 		printMap(buffMap);
 		int flagSymbol = (i % 2 ? 0 : 1);	
-		std::cout << "╒юф "<< 2 - flagSymbol << " шуЁюър: ";	
+		std::cout << "Ход "<< 2 - flagSymbol << " игрока: ";	
 		inputTurn(&buffMap, flagSymbol);
 		flagWin = checkWin(buffMap);
 		if(flagWin != 0) break;
 	}
 	std::string message;
 	switch (flagWin){
-	case 0: message = "═шў№ !!!\n"; break;
-	case 1: message = "╧юсхфшы яхЁт√щ шуЁюъ!!!\n"; break;
-	case 2: message = "╧юсхфшы тЄюЁющ шуЁюъ!!!\n"; break;
+	case 0: message = "Ничья!!!\n"; break;
+	case 1: message = "Победил первый игрок!!!\n"; break;
+	case 2: message = "Победил второй игрок!!!\n"; break;
 	}
 	return checkEndGame(buffMap, message);
 }
 
 void printIntro(){
-	std::cout << "        ─юсЁю яюцры№трЄ№ т шуЁє '╩ЁхёЄшъш-эюышъш'!\n";
-	std::cout << "        ╙яЁртыхэшх яЁюшчтюфшЄ№ё  яЁш яюью∙ш ттюфр фтєї ўшёхы,\n";
-	std::cout << "        яюыюцхэшх яю юёш 'x' ш яю юёш 'y'\n";
-	std::cout << "        ╦хтюх эшцэхх яюых шьххЄ эюьхЁ '1:1', яЁртюх тхЁїэхх '3:3'\n";
+	std::cout << "        Добро пожальвать в игру 'Крестики-нолики'!\n";
+	std::cout << "        Управление производиться при помощи ввода двух чисел,\n";
+	std::cout << "        положение по оси 'x' и по оси 'y'\n";
+	std::cout << "        Левое нижнее поле имеет номер '1:1', правое верхнее '3:3'\n";
 }
 
 void printMap(const std::string buffMap){
