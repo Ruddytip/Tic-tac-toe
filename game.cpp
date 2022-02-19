@@ -31,6 +31,7 @@ bool questionTemplate(const std::string question){
 }
 
 bool startNewGame(){
+	system("cls");
 	checkPlayer() ? logicPvE() : logicPvP();
 	return checkEndGame();
 }
@@ -99,7 +100,7 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 
 void inputTurn(std::string* buffMap, const bool flagSymbol){
 	int x(0), y(0);	
-		std::cout << "Левое верхнее поле имеет номер '1;1', правое нижнее '3;3'\n";
+		std::cout << "Левое нижнее поле имеет номер '1;1', правое верхнее '3;3'\n";
 		while(true){
 			int error(-1);
 			std::string errorName[3] = {
@@ -126,7 +127,7 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 			}
 			if(error >= 0){
 				printMap(*buffMap);
-				std::cout << "Ваш ход: введите два числа через пробел, положение по оси 'х' и по оси 'у'\n";
+				std::cout << "Ведите два числа через пробел, положение по оси 'х' и по оси 'у'\n";
 				std::cout << "Левое верхнее поле имеет номер '1;1', правое нижнее '3;3'\n";
 				std::cout << "Ошибка ввода:" << errorName[error];
 			} else{
@@ -155,8 +156,8 @@ void logicPvE(){
 	printMap(buffMap);
 	switch (flagWin){
 	case 0: std::cout << "Ничья!!!\n"; break;
-	case 1: std::cout << (flagSymbol == 1) ? "Вы победили!!!\n" : "Вы Проиграли.\n"; break;
-	case 2: std::cout << (flagSymbol == 2) ? "Вы победили!!!\n" : "Вы Проиграли.\n"; break;
+	case 1: std::cout << (flagSymbol == 1 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
+	case 2: std::cout << (flagSymbol == 2 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
 	}
 }
 
@@ -190,10 +191,10 @@ void printMap(const std::string buffMap){
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorPosition(hConsole, {0,0});
 	std::cout	<< "+-----+\n"
-				<< rows[0]
+				<< rows[2]
 				<< "|-+-+-|\n"
 				<< rows[1]
 				<< "|-+-+-|\n"
-				<< rows[2]
+				<< rows[0]
 				<< "+-----+\n";				
 }
