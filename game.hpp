@@ -1,9 +1,8 @@
 #pragma once
-#include <windows.h>
 #include <sstream>
 #include <iostream>
 
-bool checkEndGame();
+bool checkEndGame(std::string buffMap, std::string message);
 bool checkPlayer();
 bool checkSymbol();
 bool checkTurn();
@@ -12,6 +11,8 @@ bool startNewGame();
 int checkWin(const std::string buffMap);
 void calculateTurn(std::string* buffMap, const bool flagSymbol);
 void inputTurn(std::string* buffMap, const bool flagSymbol);
-void logicPvE();
-void logicPvP();
+bool logicPvE();
+bool logicPvP();
+void printIntro();
 void printMap(const std::string buffMap);
+void clearScreen();

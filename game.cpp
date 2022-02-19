@@ -1,7 +1,23 @@
 #include "game.hpp"
 
-bool checkEndGame(){
-	return questionTemplate("Хотите сыграть ещё раз?(y/n)");
+bool checkEndGame(std::string buffMap, std::string message){
+	std::string question("Хотите сыграть ещё раз?(y/n)");
+	std::string answer[2];
+	std::string input;
+	answer[0] = question[question.length() - 4];
+	answer[1] = question[question.length() - 2];
+	printMap(buffMap);
+	std::cout << message << "\033[8C" << question;	
+	getline(std::cin, input);
+	std::cout << "\033[1A";
+	while(!(input == answer[0] || input == answer[1])){
+		std::cout << "\033[5A";
+		printMap(buffMap);
+		std::cout << "Введите корректные данные(" << answer[0] << "/" << answer[1] << ")";
+		getline(std::cin, input);
+	}
+	std::cout << "\033[5A";
+	return input == answer[0] ? true : false;
 }
 
 bool checkPlayer(){
@@ -21,19 +37,21 @@ bool questionTemplate(const std::string question){
 	std::string input;
 	answer[0] = question[question.length() - 4];
 	answer[1] = question[question.length() - 2];
+	printMap("         ");
 	std::cout << question;	
 	getline(std::cin, input);
 	while(!(input == answer[0] || input == answer[1])){
+		std::cout << "\033[1A";
+		std::cout << "\033[8C\033[K";
 		std::cout << "Введите корректные данные(" << answer[0] << "/" << answer[1] << ")";
 		getline(std::cin, input);
 	}
+	std::cout << "\033[5A";
 	return input == answer[0] ? true : false;
 }
 
 bool startNewGame(){
-	system("cls");
-	checkPlayer() ? logicPvE() : logicPvP();
-	return checkEndGame();
+	return (checkPlayer() ? logicPvE() : logicPvP());
 }
 
 int checkWin(const std::string buffMap){
@@ -99,18 +117,17 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 }
 
 void inputTurn(std::string* buffMap, const bool flagSymbol){
-	int x(0), y(0);	
-		std::cout << "Левое нижнее поле имеет номер '1;1', правое верхнее '3;3'\n";
+	int x(0), y(0), error(-1);
 		while(true){
-			int error(-1);
 			std::string errorName[3] = {
 				" значения полей указанны не верно\n",
 				" значения полей могут быть только в пределах от 1 до 3\n",
 				" данное поле уже занято\n"};
 			std::string move("");
 			getline(std::cin, move);
-			if(!move.length()) continue;
-			std::cout << move.length();			
+			std::cout << (error >= 0 ? "\033[6A" : "\033[5A");
+			printMap(*buffMap);
+			error = -1;
 			if(move.length() != 3){
 				error = 0;
 			}else{
@@ -126,26 +143,25 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 				}
 			}
 			if(error >= 0){
-				printMap(*buffMap);
-				std::cout << "Ведите два числа через пробел, положение по оси 'х' и по оси 'у'\n";
-				std::cout << "Левое верхнее поле имеет номер '1;1', правое нижнее '3;3'\n";
-				std::cout << "Ошибка ввода:" << errorName[error];
+				std::cout << "\r\033[8CОшибка ввода:" << errorName[error];
+				std::cout << "\r\033[8CПовторите попытку ввода: ";
 			} else{
 				break;
 			}
 		}
+		std::cout << "\033[4A";
 		(*buffMap)[(y - 1) * 3 + (x - 1)] = (flagSymbol == 1 ? 'x' : 'o');
 }
 
-void logicPvE(){	
+bool logicPvE(){	
 	bool flagSymbol = checkSymbol();
 	bool flagTurn = checkTurn();
 	int flagWin = 0;
-	std::string buffMap = "         ";
+	std::string buffMap("         ");
 	for(int i = 0; i < buffMap.length(); ++i){
 		if(flagTurn != (i % 2)){
 			printMap(buffMap);
-			std::cout << "Ваш ход: введите два числа через пробел, положение по оси 'х' и по оси 'у'\n";
+			std::cout << "Ваш ход: ";
 			inputTurn(&buffMap, flagSymbol);
 		}else{
 			calculateTurn(&buffMap, flagSymbol);
@@ -153,48 +169,63 @@ void logicPvE(){
 		flagWin = checkWin(buffMap);
 		if(flagWin != 0) break;
 	}
-	printMap(buffMap);
+	std::string message;
 	switch (flagWin){
-	case 0: std::cout << "Ничья!!!\n"; break;
-	case 1: std::cout << (flagSymbol == 1 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
-	case 2: std::cout << (flagSymbol == 2 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
+	case 0: message = "Ничья!!!\n"; break;
+	case 1: message = (flagSymbol == 1 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
+	case 2: message = (flagSymbol == 2 ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
 	}
+	return checkEndGame(buffMap, message);
 }
 
-void logicPvP(){
+bool logicPvP(){
 	int flagWin = 0;
 	std::string buffMap = "         ";	
 	for(int i = 0; i < buffMap.length(); ++i){
 		printMap(buffMap);
 		int flagSymbol = (i % 2 ? 0 : 1);	
-		std::cout << "Ход "<< 2 - flagSymbol << " игрока: введите два числа через пробел, положение по оси 'х' и по оси 'у'\n";	
+		std::cout << "Ход "<< 2 - flagSymbol << " игрока: ";	
 		inputTurn(&buffMap, flagSymbol);
 		flagWin = checkWin(buffMap);
 		if(flagWin != 0) break;
 	}
-	printMap(buffMap);
+	std::string message;
 	switch (flagWin){
-	case 0: std::cout << "Ничья!!!\n"; break;
-	case 1: std::cout << "Победил первый игрок!!!\n"; break;
-	case 2: std::cout << "Победил второй игрок!!!\n"; break;
+	case 0: message = "Ничья!!!\n"; break;
+	case 1: message = "Победил первый игрок!!!\n"; break;
+	case 2: message = "Победил второй игрок!!!\n"; break;
 	}
+	return checkEndGame(buffMap, message);
+}
+
+void printIntro(){
+	std::cout << "        Добро пожальвать в игру 'Крестики-нолики'!\n";
+	std::cout << "        Управление производиться при помощи ввода двух чисел,\n";
+	std::cout << "        положение по оси 'x' и по оси 'y'\n";
+	std::cout << "        Левое нижнее поле имеет номер '1:1', правое верхнее '3:3'\n";
 }
 
 void printMap(const std::string buffMap){
+	clearScreen();
+	printIntro();
 	std::string rows[3];
 	for(int i = 0; i < 3; ++i){
 		rows[i] = "| | | |\n";
 		for(int j = 0; j < 3; ++j)
 			rows[i][j * 2 + 1] = buffMap[i * 3 + j];
 	}
-	system("cls");
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hConsole, {0,0});
+	std::cout << "\033[4A";
 	std::cout	<< "+-----+\n"
 				<< rows[2]
 				<< "|-+-+-|\n"
 				<< rows[1]
 				<< "|-+-+-|\n"
 				<< rows[0]
-				<< "+-----+\n";				
+				<< "+-----+";
+	std::cout << "\033[2A\033[1C";
+}
+
+void clearScreen(){
+	for(int i = 0; i < 7; ++i) {std::cout << "\033[K\n";}
+	std::cout << "\033[7A";
 }
