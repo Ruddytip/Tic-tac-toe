@@ -2,6 +2,6 @@
 
 int main(){
 	while(startNewGame()){}
-	std::cout << "\033[6B";
+	std::cout << "\033[7B";
 	return EXIT_SUCCESS;
 }
