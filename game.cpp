@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 bool checkEndGame(std::string buffMap, std::string message){
-	std::string question("ïÆ‚®‚• ·Î£‡†‚Ï •ÈÒ ‡†ß?(§/≠)");
+	std::string question("–•–æ—Ç–∏—Ç–µ —Å—ã–≥—Ä–∞—Ç—å –µ—â—ë —Ä–∞–∑?(y/n)");
 	std::string answer[2];
 	std::string input;
 	answer[0] = question[question.length() - 4];
@@ -13,7 +13,7 @@ bool checkEndGame(std::string buffMap, std::string message){
 	while(!(input == answer[0] || input == answer[1])){
 		std::cout << "\033[5A";
 		printMap(buffMap);
-		std::cout << "Ç¢•§®‚• ™Æ‡‡•™‚≠Î• §†≠≠Î•(" << answer[0] << "/" << answer[1] << ")";
+		std::cout << "–í–≤–µ–¥–∏—Ç–µ –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ(" << answer[0] << "/" << answer[1] << ")";
 		getline(std::cin, input);
 	}
 	std::cout << "\033[5A";
@@ -21,15 +21,15 @@ bool checkEndGame(std::string buffMap, std::string message){
 }
 
 bool checkPlayer(){
-	return questionTemplate("Ç†Ë ·ÆØ•‡≠®™ ™Æ¨ØÏÓ‚•‡ ®´® ¢‚Æ‡Æ© ®£‡Æ™?(™/®)");
+	return questionTemplate("–í–∞—à —Å–æ–ø–µ—Ä–Ω–∏–∫ –∫–æ–º–ø—å—é—Ç–µ—Ä –∏–ª–∏ –≤—Ç–æ—Ä–æ–π –∏–≥—Ä–æ–∫?(c/p)");
 }
 
 bool checkSymbol(){
-	return questionTemplate("ÇÎ°•‡•‚• ·®¨¢Æ´, ™Æ‚Æ‡Î¨ °„§•‚• ®£‡†‚Ï(Â/Æ)");
+	return questionTemplate("–í—ã–±–µ—Ä–µ—Ç–µ —Å–∏–º–≤–æ–ª, –∫–æ—Ç–æ—Ä—ã–º –±—É–¥–µ—Ç–µ –∏–≥—Ä–∞—Ç—å(x/o)");
 }
 
 bool checkTurn(){
-	return questionTemplate("Ü•´†•‚• ÂÆ§®‚Ï Ø•‡¢Î¨?(§/≠)");
+	return questionTemplate("–ñ–µ–ª–∞–µ—Ç–µ —Ö–æ–¥–∏—Ç—å –ø–µ—Ä–≤—ã–º?(y/n)");
 }
 
 bool questionTemplate(const std::string question){
@@ -43,7 +43,7 @@ bool questionTemplate(const std::string question){
 	while(!(input == answer[0] || input == answer[1])){
 		std::cout << "\033[1A";
 		std::cout << "\033[8C\033[K";
-		std::cout << "Ç¢•§®‚• ™Æ‡‡•™‚≠Î• §†≠≠Î•(" << answer[0] << "/" << answer[1] << ")";
+		std::cout << "–í–≤–µ–¥–∏—Ç–µ –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ(" << answer[0] << "/" << answer[1] << ")";
 		getline(std::cin, input);
 	}
 	std::cout << "\033[5A";
@@ -78,7 +78,7 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 	char point = (flagSymbol == 1 ? 'o' : 'x');
 	char pointEnemy = (flagSymbol == 1 ? 'x' : 'o');
 
-	// Ö·´® ™Æ¨ØÏÓ‚•‡ ¨Æ¶•‚ ·Æ¢•‡Ë®‚Ï ØÆ°•§≠Î© ÂÆ§, ‚Æ Æ≠ •£Æ §•´†•‚
+	// –ï—Å–ª–∏ –∫–æ–º–ø—å—é—Ç–µ—Ä –º–æ–∂–µ—Ç —Å–æ–≤–µ—Ä—à–∏—Ç—å –ø–æ–±–µ–¥–Ω—ã–π —Ö–æ–¥, —Ç–æ –æ–Ω –µ–≥–æ –¥–µ–ª–∞–µ—Ç
 	for(int i = 0; i < 9; ++i){		
 		if((*buffMap)[i] != ' ') continue;
 		std::string buffMapTest(*buffMap);
@@ -90,7 +90,7 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 		}
 	}
 
-	// Ö·´® ®£‡Æ™ ≠† ·´•§„ÓÈ•¨ ÂÆ§„ ¨Æ¶•‚ ØÆ°•§®‚Ï, ‚Æ ™Æ¨ØÏÓ‚•‡ °´Æ™®‡„•‚ ÔÁ•©™„
+	// –ï—Å–ª–∏ –∏–≥—Ä–æ–∫ –Ω–∞ —Å–ª–µ–¥—É—é—â–µ–º —Ö–æ–¥—É –º–æ–∂–µ—Ç –ø–æ–±–µ–¥–∏—Ç—å, —Ç–æ –∫–æ–º–ø—å—é—Ç–µ—Ä –±–ª–æ–∫–∏—Ä—É–µ—Ç —è—á–µ–π–∫—É
 	for(int i = 0; i < 9; ++i){		
 		if((*buffMap)[i] != ' ') continue;
 		std::string buffMapTest = (*buffMap);
@@ -102,16 +102,16 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 		}
 	}
 
-	// äÆ¨ØÏÓ‚•‡ ß†≠®¨†•‚ ·¢Æ°Æ§≠Î© „£Æ´ Ø‡® ¢Æß¨Æ¶≠Æ·‚®
+	// –ö–æ–º–ø—å—é—Ç–µ—Ä –∑–∞–Ω–∏–º–∞–µ—Ç —Å–≤–æ–±–æ–¥–Ω—ã–π —É–≥–æ–ª –ø—Ä–∏ –≤–æ–∑–º–æ–∂–Ω–æ—Å—Ç–∏
 	if((*buffMap)[0] == ' ') {(*buffMap)[0] = point; return;}
 	if((*buffMap)[2] == ' ') {(*buffMap)[2] = point; return;}
 	if((*buffMap)[6] == ' ') {(*buffMap)[6] = point; return;}
 	if((*buffMap)[8] == ' ') {(*buffMap)[8] = point; return;}
 
-	// äÆ¨ØÏÓ‚•‡ ß†≠®¨†•‚ Ê•≠‚‡ Ø‡® ¢Æß¨Æ¶≠Æ·‚®
+	// –ö–æ–º–ø—å—é—Ç–µ—Ä –∑–∞–Ω–∏–º–∞–µ—Ç —Ü–µ–Ω—Ç—Ä –ø—Ä–∏ –≤–æ–∑–º–æ–∂–Ω–æ—Å—Ç–∏
 	if((*buffMap)[4] == ' ') {(*buffMap)[4] = point; return;}
 
-	// äÆ¨ØÏÓ‚•‡ ß†≠®¨†•‚ ·¢Æ°Æ§≠„Ó ·‚Æ‡Æ≠„ Ø‡® ¢Æß¨Æ¶≠Æ·‚®
+	// –ö–æ–º–ø—å—é—Ç–µ—Ä –∑–∞–Ω–∏–º–∞–µ—Ç —Å–≤–æ–±–æ–¥–Ω—É—é —Å—Ç–æ—Ä–æ–Ω—É –ø—Ä–∏ –≤–æ–∑–º–æ–∂–Ω–æ—Å—Ç–∏
 	for(int i = 1; i < 8; i+=2)
 		if((*buffMap)[i] == ' ') {(*buffMap)[i] = point; return;}
 }
@@ -120,9 +120,9 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 	int x(0), y(0), error(-1);
 		while(true){
 			std::string errorName[3] = {
-				" ß≠†Á•≠®Ô ØÆ´•© „™†ß†≠≠Î ≠• ¢•‡≠Æ\n",
-				" ß≠†Á•≠®Ô ØÆ´•© ¨Æ£„‚ °Î‚Ï ‚Æ´Ï™Æ ¢ Ø‡•§•´†Â Æ‚ 1 §Æ 3\n",
-				" §†≠≠Æ• ØÆ´• „¶• ß†≠Ô‚Æ\n"};
+				" –∑–Ω–∞—á–µ–Ω–∏—è –ø–æ–ª–µ–π —É–∫–∞–∑–∞–Ω–Ω—ã –Ω–µ –≤–µ—Ä–Ω–æ\n",
+				" –∑–Ω–∞—á–µ–Ω–∏—è –ø–æ–ª–µ–π –º–æ–≥—É—Ç –±—ã—Ç—å —Ç–æ–ª—å–∫–æ –≤ –ø—Ä–µ–¥–µ–ª–∞—Ö –æ—Ç 1 –¥–æ 3\n",
+				" –¥–∞–Ω–Ω–æ–µ –ø–æ–ª–µ —É–∂–µ –∑–∞–Ω—è—Ç–æ\n"};
 			std::string move("");
 			getline(std::cin, move);
 			std::cout << (error >= 0 ? "\033[6A" : "\033[5A");
@@ -143,8 +143,8 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 				}
 			}
 			if(error >= 0){
-				std::cout << "\r\033[8CéË®°™† ¢¢Æ§†:" << errorName[error];
-				std::cout << "\r\033[8CèÆ¢‚Æ‡®‚• ØÆØÎ‚™„ ¢¢Æ§†: ";
+				std::cout << "\r\033[8C–û—à–∏–±–∫–∞ –≤–≤–æ–¥–∞:" << errorName[error];
+				std::cout << "\r\033[8C–ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É –≤–≤–æ–¥–∞: ";
 			} else{
 				break;
 			}
@@ -161,7 +161,7 @@ bool logicPvE(){
 	for(int i = 0; i < buffMap.length(); ++i){
 		if(flagTurn != (i % 2)){
 			printMap(buffMap);
-			std::cout << "Ç†Ë ÂÆ§: ";
+			std::cout << "–í–∞—à —Ö–æ–¥: ";
 			inputTurn(&buffMap, flagSymbol);
 		}else{
 			calculateTurn(&buffMap, flagSymbol);
@@ -171,9 +171,9 @@ bool logicPvE(){
 	}
 	std::string message;
 	switch (flagWin){
-	case 0: message = "ç®ÁÏÔ!!!\n"; break;
-	case 1: message = (flagSymbol == 1 ? "ÇÎ ØÆ°•§®´®!!!\n" : "ÇÎ è‡Æ®£‡†´®.\n"); break;
-	case 2: message = (flagSymbol == 2 ? "ÇÎ ØÆ°•§®´®!!!\n" : "ÇÎ è‡Æ®£‡†´®.\n"); break;
+	case 0: message = "–ù–∏—á—å—è!!!\n"; break;
+	case 1: message = (flagSymbol == 1 ? "–í—ã –ø–æ–±–µ–¥–∏–ª–∏!!!\n" : "–í—ã –ü—Ä–æ–∏–≥—Ä–∞–ª–∏.\n"); break;
+	case 2: message = (flagSymbol == 2 ? "–í—ã –ø–æ–±–µ–¥–∏–ª–∏!!!\n" : "–í—ã –ü—Ä–æ–∏–≥—Ä–∞–ª–∏.\n"); break;
 	}
 	return checkEndGame(buffMap, message);
 }
@@ -184,44 +184,38 @@ bool logicPvP(){
 	for(int i = 0; i < buffMap.length(); ++i){
 		printMap(buffMap);
 		int flagSymbol = (i % 2 ? 0 : 1);	
-		std::cout << "ïÆ§ "<< 2 - flagSymbol << " ®£‡Æ™†: ";	
+		std::cout << "–•–æ–¥ "<< 2 - flagSymbol << " –∏–≥—Ä–æ–∫–∞: ";	
 		inputTurn(&buffMap, flagSymbol);
 		flagWin = checkWin(buffMap);
 		if(flagWin != 0) break;
 	}
 	std::string message;
 	switch (flagWin){
-	case 0: message = "ç®ÁÏÔ!!!\n"; break;
-	case 1: message = "èÆ°•§®´ Ø•‡¢Î© ®£‡Æ™!!!\n"; break;
-	case 2: message = "èÆ°•§®´ ¢‚Æ‡Æ© ®£‡Æ™!!!\n"; break;
+	case 0: message = "–ù–∏—á—å—è!!!\n"; break;
+	case 1: message = "–ü–æ–±–µ–¥–∏–ª –ø–µ—Ä–≤—ã–π –∏–≥—Ä–æ–∫!!!\n"; break;
+	case 2: message = "–ü–æ–±–µ–¥–∏–ª –≤—Ç–æ—Ä–æ–π –∏–≥—Ä–æ–∫!!!\n"; break;
 	}
 	return checkEndGame(buffMap, message);
 }
 
 void printIntro(){
-	std::cout << "        ÑÆ°‡Æ ØÆ¶†´Ï¢†‚Ï ¢ ®£‡„ 'ä‡•·‚®™®-≠Æ´®™®'!\n";
-	std::cout << "        ìØ‡†¢´•≠®• Ø‡Æ®ß¢Æ§®‚Ï·Ô Ø‡® ØÆ¨ÆÈ® ¢¢Æ§† §¢„Â Á®·•´,\n";
-	std::cout << "        ØÆ´Æ¶•≠®• ØÆ Æ·® 'x' ® ØÆ Æ·® 'y'\n";
-	std::cout << "        ã•¢Æ• ≠®¶≠•• ØÆ´• ®¨••‚ ≠Æ¨•‡ '1:1', Ø‡†¢Æ• ¢•‡Â≠•• '3:3'\n";
+	std::cout << "        –î–æ–±—Ä–æ –ø–æ–∂–∞–ª—å–≤–∞—Ç—å –≤ –∏–≥—Ä—É '–ö—Ä–µ—Å—Ç–∏–∫–∏-–Ω–æ–ª–∏–∫–∏'!\n";
+	std::cout << "        –£–ø—Ä–∞–≤–ª–µ–Ω–∏–µ –ø—Ä–æ–∏–∑–≤–æ–¥–∏—Ç—å—Å—è –ø—Ä–∏ –ø–æ–º–æ—â–∏ –≤–≤–æ–¥–∞ –¥–≤—É—Ö —á–∏—Å–µ–ª,\n";
+	std::cout << "        –ø–æ–ª–æ–∂–µ–Ω–∏–µ –ø–æ –æ—Å–∏ 'x' –∏ –ø–æ –æ—Å–∏ 'y'\n";
+	std::cout << "        –õ–µ–≤–æ–µ –Ω–∏–∂–Ω–µ–µ –ø–æ–ª–µ –∏–º–µ–µ—Ç –Ω–æ–º–µ—Ä '1:1', –ø—Ä–∞–≤–æ–µ –≤–µ—Ä—Ö–Ω–µ–µ '3:3'\n";
 }
 
 void printMap(const std::string buffMap){
 	clearScreen();
 	printIntro();
-	std::string rows[3];
-	for(int i = 0; i < 3; ++i){
-		rows[i] = "| | | |\n";
-		for(int j = 0; j < 3; ++j)
-			rows[i][j * 2 + 1] = buffMap[i * 3 + j];
-	}
 	std::cout << "\033[4A";
-	std::cout	<< "+-----+\n"
-				<< rows[2]
-				<< "|-+-+-|\n"
-				<< rows[1]
-				<< "|-+-+-|\n"
-				<< rows[0]
-				<< "+-----+";
+	std::cout	<< "‚îå‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îê\n"
+				<< "‚îÇ" << buffMap[6] << "‚îÇ" << buffMap[7] << "‚îÇ" << buffMap[8] << "‚îÇ\n"  
+				<< "‚îú‚îÄ‚îº‚îÄ‚îº‚îÄ‚î§\n"
+				<< "‚îÇ" << buffMap[3] << "‚îÇ" << buffMap[4] << "‚îÇ" << buffMap[5] << "‚îÇ\n"  
+				<< "‚îú‚îÄ‚îº‚îÄ‚îº‚îÄ‚î§\n"
+				<< "‚îÇ" << buffMap[0] << "‚îÇ" << buffMap[1] << "‚îÇ" << buffMap[2] << "‚îÇ\n"  
+				<< "‚îî‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îò";
 	std::cout << "\033[2A\033[1C";
 }
 
