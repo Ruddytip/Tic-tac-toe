@@ -209,13 +209,13 @@ void printMap(const std::string buffMap){
 	clearScreen();
 	printIntro();
 	std::cout << "\033[4A";
-	std::cout	<< "┌─────┐\n"
+	std::cout	<< "┌─┬─┬─┐\n"
 				<< "│" << buffMap[6] << "│" << buffMap[7] << "│" << buffMap[8] << "│\n"  
 				<< "├─┼─┼─┤\n"
 				<< "│" << buffMap[3] << "│" << buffMap[4] << "│" << buffMap[5] << "│\n"  
 				<< "├─┼─┼─┤\n"
 				<< "│" << buffMap[0] << "│" << buffMap[1] << "│" << buffMap[2] << "│\n"  
-				<< "└─────┘";
+				<< "└─┴─┴─┘";
 	std::cout << "\033[2A\033[1C";
 }
 
