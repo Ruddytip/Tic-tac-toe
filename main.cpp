@@ -1,7 +1,6 @@
 #include "game.hpp"
 
 int main(){
-	while(startNewGame()){}
-	std::cout << "\033[7B";
+	tictac::start();
 	return EXIT_SUCCESS;
 }

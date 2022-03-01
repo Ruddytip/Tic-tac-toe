@@ -7,7 +7,12 @@
 Перемещение курсора назад на N столбцов: \033[ND
 Стереть до конца строки: \033[K*/
 
-bool checkEndGame(std::string buffMap, std::string message){
+void tictac::start(){
+	while(startNewGame()){}
+	std::cout << "\033[7B"; //Перемещение каретки курсора в самый низ игрового поля
+}
+
+bool tictac::checkEndGame(std::string buffMap, std::string message){
 	// Данная функция не использует шаблон вопросов, так как необходимо перед вопросом вывести результат прошлой игры
 	std::string question("Хотите сыграть ещё раз?(y/n)");
 	std::string answer[2];
@@ -28,19 +33,19 @@ bool checkEndGame(std::string buffMap, std::string message){
 	return input == answer[0] ? true : false;
 }
 
-bool checkPlayer(){
+bool tictac::checkPlayer(){
 	return questionTemplate("Ваш соперник компьютер или второй игрок?(c/p)");
 }
 
-bool checkSymbol(){
+bool tictac::checkSymbol(){
 	return questionTemplate("Выберете символ, которым будете играть(x/o)");
 }
 
-bool checkTurn(){
+bool tictac::checkTurn(){
 	return questionTemplate("Желаете ходить первым?(y/n)");
 }
 
-bool questionTemplate(const std::string question){
+bool tictac::questionTemplate(const std::string question){
 	std::string answer[2];
 	std::string input;
 	answer[0] = question[question.length() - 4];
@@ -58,11 +63,11 @@ bool questionTemplate(const std::string question){
 	return input == answer[0] ? true : false;
 }
 
-bool startNewGame(){
+bool tictac::startNewGame(){
 	return (checkPlayer() ? logicPvE() : logicPvP());
 }
 
-int checkWin(const std::string buffMap){
+int tictac::checkWin(const std::string buffMap){
 	char symbol(' ');
 	// Проверка строк
 	if(buffMap[0] == buffMap[1] && buffMap[0] == buffMap[2] && buffMap[0] != ' ') symbol = buffMap[0];
@@ -85,7 +90,7 @@ int checkWin(const std::string buffMap){
 	}
 }
 
-void calculateTurn(std::string* buffMap, const bool flagSymbol){
+void tictac::calculateTurn(std::string* buffMap, const bool flagSymbol){
 	char point = (flagSymbol == 1 ? 'o' : 'x');
 	char pointEnemy = (flagSymbol == 1 ? 'x' : 'o');
 
@@ -127,7 +132,7 @@ void calculateTurn(std::string* buffMap, const bool flagSymbol){
 		if((*buffMap)[i] == ' ') {(*buffMap)[i] = point; return;}
 }
 
-void inputTurn(std::string* buffMap, const bool flagSymbol){
+void tictac::inputTurn(std::string* buffMap, const bool flagSymbol){
 	int x(0), y(0), error(-1);
 		while(true){ // Бесконечный цикл, пока игрок не введёт корректные данные
 			std::string errorName[3] = { // Массив возможных ошибок
@@ -164,7 +169,7 @@ void inputTurn(std::string* buffMap, const bool flagSymbol){
 		(*buffMap)[(y - 1) * 3 + (x - 1)] = (flagSymbol == 1 ? 'x' : 'o');
 }
 
-bool logicPvE(){	
+bool tictac::logicPvE(){	
 	bool flagSymbol = checkSymbol();
 	bool flagTurn = checkTurn();
 	int flagWin = 0;
@@ -189,7 +194,7 @@ bool logicPvE(){
 	return checkEndGame(buffMap, message);
 }
 
-bool logicPvP(){
+bool tictac::logicPvP(){
 	int flagWin = 0;
 	std::string buffMap = "         ";	
 	for(int i = 0; i < buffMap.length(); ++i){
@@ -209,7 +214,7 @@ bool logicPvP(){
 	return checkEndGame(buffMap, message);
 }
 
-void printIntro(){
+void tictac::printIntro(){
 	std::cout << "        Добро пожальвать в игру 'Крестики-нолики'!\n";
 	std::cout << "        Управление производиться при помощи ввода двух чисел,\n";
 	std::cout << "        положение по оси 'x' и по оси 'y'\n";
@@ -217,7 +222,7 @@ void printIntro(){
 	std::cout << "\033[4A"; // Возврат каретки консоли в положение верхней левой ячейки игрового поля
 }
 
-void printMap(const std::string buffMap){
+void tictac::printMap(const std::string buffMap){
 	clearScreen();
 	printIntro();
 	std::cout	<< "┌─┬─┬─┐\n"
@@ -230,7 +235,7 @@ void printMap(const std::string buffMap){
 	std::cout << "\033[2A\033[1C"; // Коррекция положения каретки консоли, чтобы она оказалась справа от игрового поля и под всем остальным текстом
 }
 
-void clearScreen(){
+void tictac::clearScreen(){
 	for(int i = 0; i < 7; ++i) {std::cout << "\033[K\n";} // Очистка всех строк, задействованных во время игры
 	std::cout << "\033[7A"; // Возврат каретки консоли в положение верхней левой ячейки игрового поля
 }
