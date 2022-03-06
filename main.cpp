@@ -1,6 +1,7 @@
-#include "game.hpp"
+#include "tictac.hpp"
 
 int main(){
-	tictac::start();
-	return EXIT_SUCCESS;
+	CTictac game;
+	game.run();
+	return 0;
 }

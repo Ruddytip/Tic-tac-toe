@@ -1,4 +1,4 @@
-#include "game.hpp"
+#include "tictac.hpp"
 
 /*В программе используются Escape-код
 Перемещение курсора вверх на N строк: \033[NA
@@ -7,25 +7,34 @@
 Перемещение курсора назад на N столбцов: \033[ND
 Стереть до конца строки: \033[K*/
 
-void tictac::start(){
+CTictac::CTictac():
+nWidth(3), nHeight(3){
+
+}
+
+CTictac::~CTictac(){
+
+}
+
+void CTictac::run(){
 	while(startNewGame()){}
 	std::cout << "\033[7B"; //Перемещение каретки курсора в самый низ игрового поля
 }
 
-bool tictac::checkEndGame(std::string buffMap, std::string message){
+bool CTictac::checkEndGame(std::string message){
 	// Данная функция не использует шаблон вопросов, так как необходимо перед вопросом вывести результат прошлой игры
 	std::string question("Хотите сыграть ещё раз?(y/n)");
 	std::string answer[2];
 	std::string input;
 	answer[0] = question[question.length() - 4];
 	answer[1] = question[question.length() - 2];
-	printMap(buffMap);
+	printMap();
 	std::cout << message << "\033[8C" << question;	
 	getline(std::cin, input);
 	std::cout << "\033[1A";
 	while(!(input == answer[0] || input == answer[1])){
 		std::cout << "\033[5A";
-		printMap(buffMap);
+		printMap();
 		std::cout << "Введите корректные данные(" << answer[0] << "/" << answer[1] << ")";
 		getline(std::cin, input);
 	}
@@ -33,24 +42,24 @@ bool tictac::checkEndGame(std::string buffMap, std::string message){
 	return input == answer[0] ? true : false;
 }
 
-bool tictac::checkPlayer(){
+bool CTictac::checkPlayer(){
 	return questionTemplate("Ваш соперник компьютер или второй игрок?(c/p)");
 }
 
-bool tictac::checkSymbol(){
+bool CTictac::checkSymbol(){
 	return questionTemplate("Выберете символ, которым будете играть(x/o)");
 }
 
-bool tictac::checkTurn(){
+bool CTictac::checkTurn(){
 	return questionTemplate("Желаете ходить первым?(y/n)");
 }
 
-bool tictac::questionTemplate(const std::string question){
+bool CTictac::questionTemplate(const std::string question){
 	std::string answer[2];
 	std::string input;
 	answer[0] = question[question.length() - 4];
 	answer[1] = question[question.length() - 2];
-	printMap("         ");
+	printMap();
 	std::cout << question;	
 	getline(std::cin, input);
 	while(!(input == answer[0] || input == answer[1])){
@@ -63,76 +72,77 @@ bool tictac::questionTemplate(const std::string question){
 	return input == answer[0] ? true : false;
 }
 
-bool tictac::startNewGame(){
+bool CTictac::startNewGame(){
+	sFieldBuffer = std::string(nWidth * nHeight, Empty); // Очистка буфера поля
 	return (checkPlayer() ? logicPvE() : logicPvP());
 }
 
-int tictac::checkWin(const std::string buffMap){
-	char symbol(' ');
+int CTictac::checkWin(std::string buffMap){
+	char symbol(Empty);
 	// Проверка строк
-	if(buffMap[0] == buffMap[1] && buffMap[0] == buffMap[2] && buffMap[0] != ' ') symbol = buffMap[0];
-	if(buffMap[3] == buffMap[4] && buffMap[3] == buffMap[5] && buffMap[3] != ' ') symbol = buffMap[3];
-	if(buffMap[6] == buffMap[7] && buffMap[6] == buffMap[8] && buffMap[6] != ' ') symbol = buffMap[6];
+	if(buffMap[0] == buffMap[1] && buffMap[0] == buffMap[2] && buffMap[0] != Empty) symbol = buffMap[0];
+	if(buffMap[3] == buffMap[4] && buffMap[3] == buffMap[5] && buffMap[3] != Empty) symbol = buffMap[3];
+	if(buffMap[6] == buffMap[7] && buffMap[6] == buffMap[8] && buffMap[6] != Empty) symbol = buffMap[6];
 
 	// Проверка столбцов
-	if(buffMap[0] == buffMap[3] && buffMap[0] == buffMap[6] && buffMap[0] != ' ') symbol = buffMap[0];
-	if(buffMap[1] == buffMap[4] && buffMap[1] == buffMap[7] && buffMap[1] != ' ') symbol = buffMap[1];
-	if(buffMap[2] == buffMap[5] && buffMap[2] == buffMap[8] && buffMap[2] != ' ') symbol = buffMap[2];
+	if(buffMap[0] == buffMap[3] && buffMap[0] == buffMap[6] && buffMap[0] != Empty) symbol = buffMap[0];
+	if(buffMap[1] == buffMap[4] && buffMap[1] == buffMap[7] && buffMap[1] != Empty) symbol = buffMap[1];
+	if(buffMap[2] == buffMap[5] && buffMap[2] == buffMap[8] && buffMap[2] != Empty) symbol = buffMap[2];
 
 	// Проверка диагоналей
-	if(buffMap[0] == buffMap[4] && buffMap[0] == buffMap[8] && buffMap[0] != ' ') symbol = buffMap[0];
-	if(buffMap[2] == buffMap[4] && buffMap[2] == buffMap[6] && buffMap[2] != ' ') symbol = buffMap[2];
+	if(buffMap[0] == buffMap[4] && buffMap[0] == buffMap[8] && buffMap[0] != Empty) symbol = buffMap[0];
+	if(buffMap[2] == buffMap[4] && buffMap[2] == buffMap[6] && buffMap[2] != Empty) symbol = buffMap[2];
 
-	if(symbol == ' '){
+	if(symbol == Empty){
 		return 0;
 	}else{
-		return (symbol == 'x' ? 1 : 2);
+		return (symbol == Cross ? 1 : 2);
 	}
 }
 
-void tictac::calculateTurn(std::string* buffMap, const bool flagSymbol){
-	char point = (flagSymbol == 1 ? 'o' : 'x');
-	char pointEnemy = (flagSymbol == 1 ? 'x' : 'o');
+void CTictac::calculateTurn(const bool flagSymbol){
+	char point = (flagSymbol == 1 ? Zero : Cross);
+	char pointEnemy = (flagSymbol == 1 ? Cross : Zero);
 
 	// Если компьютер может совершить победный ход, то он его делает
-	for(int i = 0; i < 9; ++i){		
-		if((*buffMap)[i] != ' ') continue;
-		std::string buffMapTest(*buffMap);
+	for(int i = 0; i < nWidth * nHeight; ++i){		
+		if(sFieldBuffer[i] != Empty) continue;
+		std::string buffMapTest = sFieldBuffer;
 		buffMapTest[i] = point;
 		int win = checkWin(buffMapTest);
 		if(win != 0) {
-			if(win == 1 && point == 'x'){(*buffMap)[i] = point; return;}
-			if(win == 2 && point == 'o'){(*buffMap)[i] = point; return;}
+			if(win == 1 && point == Cross){sFieldBuffer[i] = point; return;}
+			if(win == 2 && point == Zero) {sFieldBuffer[i] = point; return;}
 		}
 	}
 
 	// Если игрок на следующем ходу может победить, то компьютер блокирует ячейку
-	for(int i = 0; i < 9; ++i){		
-		if((*buffMap)[i] != ' ') continue;
-		std::string buffMapTest = (*buffMap);
+	for(int i = 0; i < nWidth * nHeight; ++i){		
+		if(sFieldBuffer[i] != Empty) continue;
+		std::string buffMapTest(sFieldBuffer);
 		buffMapTest[i] = pointEnemy;
 		int win = checkWin(buffMapTest);
 		if(win != 0) {
-			if(win == 1 && point == 'o'){(*buffMap)[i] = point; return;}
-			if(win == 2 && point == 'x'){(*buffMap)[i] = point; return;}
+			if(win == 1 && point == Zero){sFieldBuffer[i] = point; return;}
+			if(win == 2 && point == Cross){sFieldBuffer[i] = point; return;}
 		}
 	}
 
 	// Компьютер занимает свободный угол при возможности
-	if((*buffMap)[0] == ' ') {(*buffMap)[0] = point; return;}
-	if((*buffMap)[2] == ' ') {(*buffMap)[2] = point; return;}
-	if((*buffMap)[6] == ' ') {(*buffMap)[6] = point; return;}
-	if((*buffMap)[8] == ' ') {(*buffMap)[8] = point; return;}
+	if(sFieldBuffer[0] == Empty) {sFieldBuffer[0] = point; return;}
+	if(sFieldBuffer[2] == Empty) {sFieldBuffer[2] = point; return;}
+	if(sFieldBuffer[6] == Empty) {sFieldBuffer[6] = point; return;}
+	if(sFieldBuffer[8] == Empty) {sFieldBuffer[8] = point; return;}
 
 	// Компьютер занимает центр при возможности
-	if((*buffMap)[4] == ' ') {(*buffMap)[4] = point; return;}
+	if(sFieldBuffer[4] == Empty) {sFieldBuffer[4] = point; return;}
 
 	// Компьютер занимает свободную сторону при возможности
 	for(int i = 1; i < 8; i+=2)
-		if((*buffMap)[i] == ' ') {(*buffMap)[i] = point; return;}
+		if(sFieldBuffer[i] == Empty) {sFieldBuffer[i] = point; return;}
 }
 
-void tictac::inputTurn(std::string* buffMap, const bool flagSymbol){
+void CTictac::inputTurn(const bool flagSymbol){
 	int x(0), y(0), error(-1);
 		while(true){ // Бесконечный цикл, пока игрок не введёт корректные данные
 			std::string errorName[3] = { // Массив возможных ошибок
@@ -142,7 +152,7 @@ void tictac::inputTurn(std::string* buffMap, const bool flagSymbol){
 			std::string move("");
 			getline(std::cin, move);
 			std::cout << (error >= 0 ? "\033[6A" : "\033[5A"); // Возврат каретки консоли в положение верхней левой ячейки игрового поля
-			printMap(*buffMap);
+			printMap();
 			error = -1;
 			if(move.length() != 3){
 				error = 0;
@@ -155,7 +165,7 @@ void tictac::inputTurn(std::string* buffMap, const bool flagSymbol){
 				if(x < 1 || x > 3 || y < 1 || y > 3){
 					error = 1;
 				}else{
-					if((*buffMap)[(y - 1) * 3 + (x - 1)] != ' ') error = 2;
+					if(sFieldBuffer[(y - 1) * 3 + (x - 1)] != ' ') error = 2;
 				}
 			}
 			if(error >= 0){
@@ -166,23 +176,22 @@ void tictac::inputTurn(std::string* buffMap, const bool flagSymbol){
 			}
 		}
 		std::cout << "\033[4A"; // Возврат каретки консоли в положение верхней левой ячейки игрового поля
-		(*buffMap)[(y - 1) * 3 + (x - 1)] = (flagSymbol == 1 ? 'x' : 'o');
+		sFieldBuffer[(y - 1) * 3 + (x - 1)] = (flagSymbol == 1 ? 'x' : 'o');
 }
 
-bool tictac::logicPvE(){	
+bool CTictac::logicPvE(){	
 	bool flagSymbol = checkSymbol();
 	bool flagTurn = checkTurn();
 	int flagWin = 0;
-	std::string buffMap("         ");
-	for(int i = 0; i < buffMap.length(); ++i){
+	for(int i = 0; i < sFieldBuffer.length(); ++i){
 		if(flagTurn != (i % 2)){
-			printMap(buffMap);
+			printMap();
 			std::cout << "Ваш ход: ";
-			inputTurn(&buffMap, flagSymbol);
+			inputTurn(flagSymbol);
 		}else{
-			calculateTurn(&buffMap, flagSymbol);
+			calculateTurn(flagSymbol);
 		}
-		flagWin = checkWin(buffMap);
+		flagWin = checkWin(sFieldBuffer);
 		if(flagWin != 0) break;
 	}
 	std::string message;
@@ -191,18 +200,17 @@ bool tictac::logicPvE(){
 	case 1: message = (flagSymbol ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
 	case 2: message = (!flagSymbol ? "Вы победили!!!\n" : "Вы Проиграли.\n"); break;
 	}
-	return checkEndGame(buffMap, message);
+	return checkEndGame(message);
 }
 
-bool tictac::logicPvP(){
+bool CTictac::logicPvP(){
 	int flagWin = 0;
-	std::string buffMap = "         ";	
-	for(int i = 0; i < buffMap.length(); ++i){
-		printMap(buffMap);
+	for(int i = 0; i < sFieldBuffer.length(); ++i){
+		printMap();
 		int flagSymbol = (i % 2 ? 0 : 1);	
 		std::cout << "Ход "<< 2 - flagSymbol << " игрока: ";	
-		inputTurn(&buffMap, flagSymbol);
-		flagWin = checkWin(buffMap);
+		inputTurn(flagSymbol);
+		flagWin = checkWin(sFieldBuffer);
 		if(flagWin != 0) break;
 	}
 	std::string message;
@@ -211,10 +219,10 @@ bool tictac::logicPvP(){
 	case 1: message = "Победил первый игрок!!!\n"; break;
 	case 2: message = "Победил второй игрок!!!\n"; break;
 	}
-	return checkEndGame(buffMap, message);
+	return checkEndGame(message);
 }
 
-void tictac::printIntro(){
+void CTictac::printIntro(){
 	std::cout << "        Добро пожальвать в игру 'Крестики-нолики'!\n";
 	std::cout << "        Управление производиться при помощи ввода двух чисел,\n";
 	std::cout << "        положение по оси 'x' и по оси 'y'\n";
@@ -222,20 +230,20 @@ void tictac::printIntro(){
 	std::cout << "\033[4A"; // Возврат каретки консоли в положение верхней левой ячейки игрового поля
 }
 
-void tictac::printMap(const std::string buffMap){
+void CTictac::printMap(){
 	clearScreen();
 	printIntro();
 	std::cout	<< "┌─┬─┬─┐\n"
-				<< "│" << buffMap[6] << "│" << buffMap[7] << "│" << buffMap[8] << "│\n"  
+				<< "│" << sFieldBuffer[6] << "│" << sFieldBuffer[7] << "│" << sFieldBuffer[8] << "│\n"  
 				<< "├─┼─┼─┤\n"
-				<< "│" << buffMap[3] << "│" << buffMap[4] << "│" << buffMap[5] << "│\n"  
+				<< "│" << sFieldBuffer[3] << "│" << sFieldBuffer[4] << "│" << sFieldBuffer[5] << "│\n"  
 				<< "├─┼─┼─┤\n"
-				<< "│" << buffMap[0] << "│" << buffMap[1] << "│" << buffMap[2] << "│\n"  
+				<< "│" << sFieldBuffer[0] << "│" << sFieldBuffer[1] << "│" << sFieldBuffer[2] << "│\n"  
 				<< "└─┴─┴─┘";
 	std::cout << "\033[2A\033[1C"; // Коррекция положения каретки консоли, чтобы она оказалась справа от игрового поля и под всем остальным текстом
 }
 
-void tictac::clearScreen(){
-	for(int i = 0; i < 7; ++i) {std::cout << "\033[K\n";} // Очистка всех строк, задействованных во время игры
+void CTictac::clearScreen(){
+	for(int i = 0; i < nHeight * 2 + 1; ++i) {std::cout << "\033[K\n";} // Очистка всех строк, задействованных во время игры
 	std::cout << "\033[7A"; // Возврат каретки консоли в положение верхней левой ячейки игрового поля
 }

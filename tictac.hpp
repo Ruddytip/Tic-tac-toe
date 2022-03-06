@@ -2,14 +2,15 @@
 #include <sstream>
 #include <iostream>
 
-namespace tictac{
-    /*Функция старта игры*/
-    void start();
+class CTictac{
+private:
+    enum ESymbols{Empty = ' ', Cross = 'x', Zero = 'o'};    
+    std::string sFieldBuffer;
+    uint8_t nWidth, nHeight;
 
     /*Функция проверки новой игры, возвращает true если игрок выбрал начать новую игру:
-    buffMap - буфер игрового поля 
     message - хранит результат прошлой игры для отображения при вопросе*/
-    bool checkEndGame(std::string buffMap, std::string message);
+    bool checkEndGame(std::string message);
 
     /*Функция выбора режима игры, против второго игрока или компьютера
     Возвращает true если игрок выбрал режим игры с компьютером*/
@@ -41,14 +42,12 @@ namespace tictac{
     int checkWin(const std::string buffMap);
 
     /*Функция расчета хода компьютера
-    *buffMap - указатель на буфер игрового поля
     flagSymbol - true если игрок играет символом 'x'*/
-    void calculateTurn(std::string* buffMap, const bool flagSymbol);
+    void calculateTurn(const bool flagSymbol);
 
     /*Функция ввода данных для хода игрока
-    *buffMap - указатель на буфер игрового поля
     flagSymbol - true если игрок играет символом 'x'*/
-    void inputTurn(std::string* buffMap, const bool flagSymbol);
+    void inputTurn(const bool flagSymbol);
 
     /*Функция расчета режима игры против компьютера*/
     bool logicPvE();
@@ -60,9 +59,14 @@ namespace tictac{
     void printIntro();
 
     /*Функция вывода игрового поля*/
-    void printMap(const std::string buffMap);
+    void printMap();
 
     /*Функция очистки всех строк, задействованных во время игры*/
     void clearScreen();
+public:
+    CTictac();
+    ~CTictac();
 
+    /*Функция старта игры*/
+    void run();
 };
