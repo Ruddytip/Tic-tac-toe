@@ -1,72 +1,33 @@
 #pragma once
 #include <sstream>
-#include <iostream>
+#include "screen.hpp"
 
 class CTictac{
 private:
-    enum ESymbols{Empty = ' ', Cross = 'x', Zero = 'o'};    
-    std::string sFieldBuffer;
+    char32_t map[3][3];
     uint8_t nWidth, nHeight;
+    bool firstTurn;
+    char32_t symbol;
+    CScreen scr;
 
-    /*Функция проверки новой игры, возвращает true если игрок выбрал начать новую игру:
-    message - хранит результат прошлой игры для отображения при вопросе*/
-    bool checkEndGame(std::string message);
-
-    /*Функция выбора режима игры, против второго игрока или компьютера
-    Возвращает true если игрок выбрал режим игры с компьютером*/
-    bool checkPlayer();
-
-    /*Функция выбора символа для игры против компьютера
-    Возвращает true если игрок выбрал символ 'x'*/
-    bool checkSymbol();
-
-    /*Функция выбора первого хода для игры против компьютера
-    Возвращает true если игрок выбрал первый ход*/
-    bool checkTurn();
-
-    /*Шаблон для вопросов с выбором одного из двух предложенных вариантов,
-    для корректной работы в конце строки question должна быть следующая конструкция:
-    (a/b) - где 'a' и 'b' это разные латинские символы для вариантов ответа
-    Возвращает true если игрок выбрал первый из предложенных символов*/
-    bool questionTemplate(const std::string question);
-
-    /*Функция начала новой игры
-    Возвращает true если игрок выбрал начать новую игру*/
-    bool startNewGame();
-
-    /*Функция проверки комбинаций символов
-    buffMap - буфер игрового поля
-    Возвращает 0 если нет комбинаций символов 3 в ряд
-    Возвращает 1 если есть комбинация символов 'x' 3 в ряд
-    Возвращает 2 если есть комбинация символов 'o' 3 в ряд*/
-    int checkWin(const std::string buffMap);
-
-    /*Функция расчета хода компьютера
-    flagSymbol - true если игрок играет символом 'x'*/
-    void calculateTurn(const bool flagSymbol);
-
-    /*Функция ввода данных для хода игрока
-    flagSymbol - true если игрок играет символом 'x'*/
-    void inputTurn(const bool flagSymbol);
-
-    /*Функция расчета режима игры против компьютера*/
-    bool logicPvE();
-
-    /*Функция расчета режима игры двух игроков против друг друга*/
-    bool logicPvP();
-
-    /*Функция вывода текста справа от игрового поля*/
+    // /*Шаблон для вопросов с выбором одного из двух предложенных вариантов,
+    // для корректной работы в конце строки question должна быть следующая конструкция:
+    // (a/b) - где 'a' и 'b' это разные латинские символы для вариантов ответа
+    // Возвращает true если игрок выбрал первый из предложенных символов*/
+    bool questionTemplate(const std::u32string question);
+    void clearMap();
     void printIntro();
-
-    /*Функция вывода игрового поля*/
+    bool checkStart();
+    bool startNewGame();
     void printMap();
-
-    /*Функция очистки всех строк, задействованных во время игры*/
-    void clearScreen();
+    bool checkPlayer();
+    void playPVP();
+    void playPVE();
+    void inputTurn(bool flagTurn);
+    void calculateTurn();
+    char32_t checkWin();
 public:
     CTictac();
     ~CTictac();
-
-    /*Функция старта игры*/
-    void run();
+    void run(); // Функция старта игры
 };
