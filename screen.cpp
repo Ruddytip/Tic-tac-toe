@@ -1,3 +1,5 @@
+#include <locale> // wstring_convert
+#include <codecvt> // codecvt_utf8
 #include "screen.hpp"
 
 /*В программе используются Escape-код
@@ -5,7 +7,9 @@
 Перемещение курсора вниз на N строк: \033[NB
 Перемещение курсора вперед на N столбцов: \033[NC
 Перемещение курсора назад на N столбцов: \033[ND
-Стереть до конца строки: \033[K*/
+Стереть до конца строки: \033[K
+Цвет текста: \033[38;2;⟨r⟩;⟨g⟩;⟨b⟩m
+Цвет фона: \033[48;2;⟨r⟩;⟨g⟩;⟨b⟩m*/
 
 std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
@@ -17,7 +21,6 @@ width(_width), height(_height), background(1){
         screenBuffer.push_back("");
         std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
 
 CScreen::~CScreen(){

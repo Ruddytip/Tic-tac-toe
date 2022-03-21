@@ -1,8 +1,6 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <locale> // wstring_convert
-#include <codecvt> // codecvt_utf8
 
 struct COLOR{
     uint8_t R;
