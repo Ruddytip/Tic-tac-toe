@@ -74,6 +74,8 @@ void CTictac::playPVP(){
 	symbol = SYMBOLS::CROSS;
 	for(int i = 0; i < 9; ++i){
 		currentMove = i%2 == 0;
+		std::u32string text = (currentMove ? U"Ход первого игрока" : U"Ход второго игрока");
+		scr.setText(8, 5, COLORS::YELLOW, COLORS::BLACK, text);
 		inputTurn();
 		winFlag = checkWin();
 		if(winFlag != SYMBOLS::EMPTY) break;
