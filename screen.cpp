@@ -10,7 +10,7 @@
 std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
 CScreen::CScreen(uint8_t _width, uint8_t _height):
-width(_width), height(_height){
+width(_width), height(_height), background(1){
     std::cout << "\x1b[?25l"; // Скрывает курсор
     for(int i = 0; i < width * height; ++i) pixels.push_back(VirtualPixel{COLORS::WHITE, COLORS::BLACK, SYMBOLS::EMPTY});
     for(int i = 0; i < height; ++i) {
@@ -43,6 +43,7 @@ void CScreen::show(){
 std::string CScreen::convertColor(COLOR _cp, COLOR _cb){
     std::string penCol  = "\033[38;2;" + std::to_string(_cp.R) + ';' + std::to_string(_cp.G) + ';' + std::to_string(_cp.B) + 'm';
     std::string brshCol = "\033[48;2;" + std::to_string(_cb.R) + ';' + std::to_string(_cb.G) + ';' + std::to_string(_cb.B) + 'm';
+    brshCol = background ? brshCol : "";
     return (penCol + brshCol);
 }
 
@@ -101,4 +102,8 @@ void CScreen::setText(int _x, int _y, COLOR _penColor, COLOR _brushColor, std::u
         pixels[index].brushColor = _brushColor;
         pixels[index].symbol = _text[i];
     }
+}
+
+void CScreen::setBG(bool _flag){
+    background = _flag;
 }

@@ -1,7 +1,8 @@
 #include "tictac.hpp"
 
 CTictac::CTictac():
-nWidth(80), nHeight(8), firstTurn(true), symbol(SYMBOLS::EMPTY), scr(nWidth, nHeight){
+nWidth(80), nHeight(8), firstTurn(true), currentMove(true), symbol(SYMBOLS::EMPTY), scr(nWidth, nHeight){
+	scr.setBG(false);
 	clearMap();
 	printIntro();
 }
@@ -72,7 +73,8 @@ void CTictac::playPVP(){
 	char32_t winFlag;
 	symbol = SYMBOLS::CROSS;
 	for(int i = 0; i < 9; ++i){
-		inputTurn(i%2 == 0);
+		currentMove = i%2 == 0;
+		inputTurn();
 		winFlag = checkWin();
 		if(winFlag != SYMBOLS::EMPTY) break;
 	}
@@ -89,11 +91,13 @@ void CTictac::playPVP(){
 
 void CTictac::playPVE(){
 	firstTurn = questionTemplate(U"Желаете ходить первым?(y/n)");
-	symbol = questionTemplate(U"Выберете символ, которым будете играть(x/o)") ? SYMBOLS::CROSS : SYMBOLS::ZERO;
+	symbol = (questionTemplate(U"Выберете символ, которым будете играть(x/o)") ? SYMBOLS::CROSS : SYMBOLS::ZERO);
 	char32_t winFlag;
+	bool helpFT = firstTurn;
 	for(int i = 0; i < 9; ++i){
-		firstTurn ? inputTurn(i%2 == 0): calculateTurn();
-		firstTurn = !firstTurn;
+		currentMove = i%2 == 0;
+		helpFT ? inputTurn(): calculateTurn();
+		helpFT = !helpFT;
 		scr.clear();
 		printMap();
 		scr.show();
@@ -112,19 +116,18 @@ void CTictac::playPVE(){
 	}
 }
 
-void CTictac::inputTurn(bool flagTurn){
+void CTictac::inputTurn(){
 	int x(0), y(0), error(-1);
 	while(true){ // Бесконечный цикл, пока игрок не введёт корректные данные
 		std::u32string errorName[3] = { // Массив возможных ошибок
 			U"Значения полей указанны не верно",
 			U"Значения полей могут быть только в пределах от 1 до 3",
-			U"Занное поле уже занято"};
+			U"Данное поле уже занято"};
 		std::string move("");
-		scr.clear();
-		printMap();
-		scr.setText(0, 7, COLORS::WHITE, COLORS::BLACK, U"Введите координаты ячейки: ");
+		scr.setText(0, 7, COLORS::BLACK, COLORS::BLACK, std::u32string(nWidth, U' '));
+		scr.setText(0, 7, COLORS::WHITE, COLORS::BLACK, U"Введите координаты ячейки:");
 		scr.show();
-		std::cout << "\033[1A\r\033[28C";
+		std::cout << "\033[1A\r\033[27C";
 		getline(std::cin, move);
 		error = -1;
 		if(move.length() != 3){
@@ -146,13 +149,16 @@ void CTictac::inputTurn(bool flagTurn){
 			printMap();
 			scr.setText(8, 2, COLORS::RED, COLORS::BLACK, U"Ошибка ввода:");
 			scr.setText(8, 3, COLORS::RED, COLORS::BLACK, errorName[error]);
-			scr.show();
 		} else{
+			scr.show();
 			break;
 		}
 	}
 
-	map[x][y] = (flagTurn ? SYMBOLS::CROSS : SYMBOLS::ZERO);
+	char32_t p1 = symbol;
+	char32_t p2 = (symbol == SYMBOLS::CROSS ? SYMBOLS::ZERO : SYMBOLS::CROSS);
+
+	map[x][y] = (currentMove == firstTurn ? p1 : p2);
 	scr.clear();
 	printMap();
 	scr.show();

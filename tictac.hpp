@@ -6,7 +6,7 @@ class CTictac{
 private:
     char32_t map[3][3];
     uint8_t nWidth, nHeight;
-    bool firstTurn;
+    bool firstTurn, currentMove;
     char32_t symbol;
     CScreen scr;
 
@@ -23,7 +23,7 @@ private:
     bool checkPlayer();
     void playPVP();
     void playPVE();
-    void inputTurn(bool flagTurn);
+    void inputTurn();
     void calculateTurn();
     char32_t checkWin();
 public:

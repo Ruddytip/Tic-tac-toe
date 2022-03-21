@@ -39,6 +39,7 @@ private:
     uint8_t width, height; // Ширина и высота экрана
     std::vector<VirtualPixel> pixels; // Массив всех виртуальных пикселей
     std::vector<std::string> screenBuffer; // Массив строк буфера экрана
+    bool background: 1; // Отрисовывать ли фон или нет
     // Конвертирует значения виртуальных пикселей в буфер экрана
     void convertBuffer();
     // Очищает буфер экрана
@@ -63,4 +64,6 @@ public:
     char32_t getSymbol(uint8_t _x, uint8_t _y);
     // Вывод текста на экран
     void setText(int _x, int _y, COLOR _penColor, COLOR _brushColor, std::u32string _text);
+    // Устанавливет режим отображения фона
+    void setBG(bool _flag);
 };
