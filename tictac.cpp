@@ -6,12 +6,15 @@ CTictac::CTictac(): symbol(SYMBOLS::EMPTY),
 					firstTurn(true),
 					scr(80, 8)
 {
-	scr.setBG(false);
+	scr.setBG(false); // Отключение отрисовки фона
+	scr.cursorVision(true); // Отключение курсора
 	clearMap();
 	printIntro();
 }
 
-CTictac::~CTictac(){}
+CTictac::~CTictac(){
+	scr.cursorVision(true);
+}
 
 void CTictac::clearMap(){
 	for(int i = 0; i < 3; ++i)
@@ -23,7 +26,7 @@ void CTictac::printIntro(){
 	scr.clear();
 	scr.setText(0, 0, COLORS::YELLOW, COLORS::BLACK, U"Добро пожальвать в игру 'Крестики-нолики'!");
 	scr.setText(0, 1, COLORS::YELLOW, COLORS::BLACK, U"Управление производиться при помощи ввода двух чисел,");
-	scr.setText(0, 2, COLORS::YELLOW, COLORS::BLACK, U"положение по оси 'x' и по оси 'y'");
+	scr.setText(0, 2, COLORS::YELLOW, COLORS::BLACK, U"положение по оси 'x' и по оси 'y' соответственно.)");
 	scr.setText(0, 3, COLORS::YELLOW, COLORS::BLACK, U"Левое нижнее поле имеет номер '1:1', правое верхнее '3:3");
 	scr.show();
 }
@@ -79,7 +82,7 @@ void CTictac::playPVP(){
 	symbol = SYMBOLS::CROSS;
 	enemy  = SYMBOLS::ZERO;
 
-	for(int i = 0; i < 9; ++i){
+	for(int i = 0; i < 9; ++i){ // 9 - максимальное количество ходов в игре
 		std::u32string text = ((i%2 == 0) ? U"Ход первого игрока" : U"Ход второго игрока");
 		scr.setText(8, 5, COLORS::YELLOW, COLORS::BLACK, text);
 		inputTurn(i%2 == 0);
@@ -100,10 +103,10 @@ void CTictac::playPVE(){
 	enemy     = (symbol == SYMBOLS::CROSS ? SYMBOLS::ZERO : SYMBOLS::CROSS);
 	char32_t winFlag;
 
-	for(int i = 0; i < 9; ++i){
+	for(int i = 0; i < 9; ++i){ // 9 - максимальное количество ходов в игре
 		(firstTurn == (i%2 == 0)) ? inputTurn(i%2 == 0): calculateTurn();
-		scr.clear(); printMap(); scr.show();
 		winFlag = checkWin();
+		scr.clear(); printMap(); scr.show();
 		if(winFlag != SYMBOLS::EMPTY) break;
 	}
 
@@ -118,43 +121,40 @@ std::string CTictac::enterCord(){
 	scr.setText(0, 7, COLORS::BLACK, COLORS::BLACK, std::u32string(scr.getWidth(), U' '));
 	scr.setText(0, 7, COLORS::WHITE, COLORS::BLACK, U"Введите координаты ячейки:");
 	scr.show();
-	std::cout << "\033[1A\r\033[27C";
+	std::cout << "\033[1A\r\033[27C"; // Перемещение курсора в конец строки вопроса
+	scr.cursorVision(true);
 	getline(std::cin, _enterData);
+	scr.cursorVision(false);
 	return _enterData;
 }
 
-int CTictac::checkEnterErrors(std::string _data, bool _flagTurn){
-	if(_data.length() != 3) return 0;
+std::u32string CTictac::checkEnterErrors(std::string _data, bool _flagTurn){
+	if(_data.length() != 3)
+		return U"Значения полей указанны не верно";
 	
 	std::stringstream iss(_data);
 	std::string dx(""), dy("");
 	iss >> dx >> dy;
 	int x = std::atoi(dx.c_str()) - 1;
 	int y = std::atoi(dy.c_str()) - 1;
+	if(x < 0 || x > 2 || y < 0 || y > 2)
+		return U"Значения полей могут быть только в пределах от 1 до 3";
 
-	if(x < 0 || x > 2 || y < 0 || y > 2) return 1;
-	if(map[x][y] != SYMBOLS::EMPTY)      return 2;
+	if(map[x][y] != SYMBOLS::EMPTY)
+		return U"Данное поле уже занято";
 
 	map[x][y] = (_flagTurn == firstTurn ? symbol : enemy);
 	scr.clear(); printMap(); scr.show();
+	return U"";
 }
 
 void CTictac::inputTurn(bool _flagTurn){
 	while(true){ // Бесконечный цикл, пока игрок не введёт корректные данные
 		std::string move(enterCord());
-		int error = checkEnterErrors(move, _flagTurn);
-		if(error < 0) return;
-
-		std::u32string errorName[3] = { // Массив возможных ошибок
-			U"Значения полей указанны не верно",
-			U"Значения полей могут быть только в пределах от 1 до 3",
-			U"Данное поле уже занято"};
-		
-		if(error >= 0){
-			scr.clear(); printMap();
-			scr.setText(8, 2, COLORS::RED, COLORS::BLACK, U"Ошибка ввода:");
-			scr.setText(8, 3, COLORS::RED, COLORS::BLACK, errorName[error]);
-		}
+		std::u32string error = checkEnterErrors(move, _flagTurn);
+		if(error.empty()) break;
+		scr.setText(8, 2, COLORS::RED, COLORS::BLACK, U"Ошибка ввода:");
+		scr.setText(8, 3, COLORS::RED, COLORS::BLACK, error);
 	}
 }
 
@@ -225,19 +225,23 @@ char32_t CTictac::checkWin(){
 void CTictac::run(){
 	if(!checkStart()) return;
 	while(startNewGame()){}
+	scr.cursorVision(true);
 }
 
 bool CTictac::questionTemplate(const std::u32string question){
 	std::string input(""), answer[2];
 	std::u32string errorText = U"";
-	answer[0] = question[question.length() - 4];
-	answer[1] = question[question.length() - 2];
+	answer[0] = question[question.length() - 4]; // Левый символ для ответа
+	answer[1] = question[question.length() - 2]; // Правый символ для ответа
 	while(!(input == answer[0] || input == answer[1])){
 		scr.setText(0, 7, COLORS::BLACK, COLORS::BLACK, std::u32string(scr.getWidth(), SYMBOLS::EMPTY));
 		scr.setText(0, 7, COLORS::WHITE, COLORS::BLACK, errorText + question);
 		scr.show();
+		// Перемещение курсора в конец строки вопроса
 		std::cout << "\033[1A\r\033[" + std::to_string(question.length() + errorText.length()) + "C";
+		scr.cursorVision(true);
 		getline(std::cin, input);
+		scr.cursorVision(false);
 		errorText = U"Неверный ввод. ";
 	}
 	return input == answer[0] ? true : false;

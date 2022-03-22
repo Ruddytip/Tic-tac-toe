@@ -13,9 +13,13 @@
 
 std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
+void CScreen::cursorVision(bool _flag){
+    std::cout << (_flag ? "\x1b[?25h" : "\x1b[?25l");
+}
+
 CScreen::CScreen(uint8_t _width, uint8_t _height):
 width(_width), height(_height), background(1){
-    std::cout << "\x1b[?25l"; // Скрывает курсор
+    cursorVision(false);
     for(int i = 0; i < width * height; ++i) pixels.push_back(VirtualPixel{COLORS::WHITE, COLORS::BLACK, SYMBOLS::EMPTY});
     for(int i = 0; i < height; ++i) {
         screenBuffer.push_back("");
@@ -24,7 +28,7 @@ width(_width), height(_height), background(1){
 }
 
 CScreen::~CScreen(){
-    std::cout << "\x1b[?25h"; // Делает курсор видимым
+    cursorVision(true);
     while(!pixels.empty()) pixels.pop_back();
     while(!screenBuffer.empty()) screenBuffer.pop_back();
 }

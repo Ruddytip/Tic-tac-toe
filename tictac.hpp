@@ -41,9 +41,10 @@ private:
     // Возвращает символ победителя при нахождении комбинации,
     // а если таковых нет, то возвращает символ пробела
     char32_t checkWin();
-    //
+    // Обработка ввода координат
     std::string enterCord();
-    int checkEnterErrors(std::string _data, bool _flagTurn);
+    // 
+    std::u32string checkEnterErrors(std::string _data, bool _flagTurn);
 public:
     CTictac();
     ~CTictac();

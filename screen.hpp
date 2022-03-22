@@ -9,10 +9,10 @@ struct COLOR{
 };
 
 namespace SYMBOLS{
-    const char32_t EMPTY  {' '};
-    const char32_t CROSS  {'X'};
-    const char32_t ZERO   {'O'};
-    const char32_t ERROR  {'~'};
+    const char32_t EMPTY  {U' '};
+    const char32_t CROSS  {U'X'};
+    const char32_t ZERO   {U'O'};
+    const char32_t ERROR  {U'~'};
 };
 
 namespace COLORS{
@@ -64,6 +64,10 @@ public:
     void setText(int _x, int _y, COLOR _penColor, COLOR _brushColor, std::u32string _text);
     // Устанавливет режим отображения фона
     void setBG(bool _flag);
+    // Устанавливает видимость курсора
+    void cursorVision(bool _flag);
+    // Возвращает ширину экрана
     uint8_t getWidth();
+    // Возвращает высоту экрана
     uint8_t getHeight();
 };
