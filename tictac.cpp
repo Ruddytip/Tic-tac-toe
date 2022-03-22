@@ -26,7 +26,7 @@ void CTictac::printIntro(){
 	scr.clear();
 	scr.setText(0, 0, COLORS::YELLOW, COLORS::BLACK, U"Добро пожальвать в игру 'Крестики-нолики'!");
 	scr.setText(0, 1, COLORS::YELLOW, COLORS::BLACK, U"Управление производиться при помощи ввода двух чисел,");
-	scr.setText(0, 2, COLORS::YELLOW, COLORS::BLACK, U"положение по оси 'x' и по оси 'y' соответственно.)");
+	scr.setText(0, 2, COLORS::YELLOW, COLORS::BLACK, U"положение по оси 'x' и по оси 'y' соответственно.");
 	scr.setText(0, 3, COLORS::YELLOW, COLORS::BLACK, U"Левое нижнее поле имеет номер '1:1', правое верхнее '3:3");
 	scr.show();
 }
