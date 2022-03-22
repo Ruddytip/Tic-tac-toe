@@ -4,4 +4,5 @@
 Для настройки Windows-терминала используйте команду "chcp 65001"
 Корректно работает на Windows 11 64bit и Ubuntu 21.10 64bit
 
-![Иллюстрация к проекту](https://github.com/Ruddytip/Tic-tac-toe/blob/master/image/image.bmp)
+![Интро игры](https://github.com/Ruddytip/Tic-tac-toe/blob/master/image/image1.bmp)
+![Результат игры](https://github.com/Ruddytip/Tic-tac-toe/blob/master/image/image2.bmp)
