@@ -110,3 +110,11 @@ void CScreen::setText(int _x, int _y, COLOR _penColor, COLOR _brushColor, std::u
 void CScreen::setBG(bool _flag){
     background = _flag;
 }
+
+uint8_t CScreen::getWidth(){
+    return width;
+}
+
+uint8_t CScreen::getHeight(){
+    return height;
+}

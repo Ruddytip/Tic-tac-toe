@@ -64,4 +64,6 @@ public:
     void setText(int _x, int _y, COLOR _penColor, COLOR _brushColor, std::u32string _text);
     // Устанавливет режим отображения фона
     void setBG(bool _flag);
+    uint8_t getWidth();
+    uint8_t getHeight();
 };
