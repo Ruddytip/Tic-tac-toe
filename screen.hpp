@@ -34,7 +34,7 @@ struct VirtualPixel{ // Структара виртуального пиксел
 
 class CScreen{ // Клас экрана виртуального консоли
 private:
-    uint8_t width, height; // Ширина и высота экрана
+    uint32_t width, height; // Ширина и высота экрана
     std::vector<VirtualPixel> pixels; // Массив всех виртуальных пикселей
     std::vector<std::string> screenBuffer; // Массив строк буфера экрана
     bool background: 1; // Отрисовывать ли фон или нет
@@ -43,29 +43,29 @@ private:
     // Очищает буфер экрана
     void clearScreenBuffer();
     // Конвертирует числовое значение цвета RGB в строку
-    std::string convertColor(COLOR _colorPen, COLOR _colorBrush);
+    std::string convertColor(const COLOR _colorPen, const COLOR _colorBrush);
 public:
     // Задаёт ширину и высоту экрана
-    CScreen(uint8_t _width, uint8_t _height);
+    CScreen(const uint32_t _width, const uint32_t _height);
     ~CScreen();
     // Вывод на экран
     void show();
     // Очистка буфера
     void clear();
     // Установить в указанных координатах символ _symbol цвета _penColor на фоне _brushColor
-    void setPixel(uint8_t _x, uint8_t _y, COLOR _penColor, COLOR _brushColor, char32_t _symbol);
+    void setPixel(const uint32_t _x, const uint32_t _y, const COLOR _penColor, const COLOR _brushColor, const char32_t _symbol);
     // возвращает цвет символа    
-    COLOR getPenColor(uint8_t _x, uint8_t _y);
+    COLOR getPenColor(const uint32_t _x, const uint32_t _y);
     // Возвращает цвет фона
-    COLOR getBrushColor(uint8_t _x, uint8_t _y);
+    COLOR getBrushColor(const uint32_t _x, const uint32_t _y);
     // Возвращает символ
-    char32_t getSymbol(uint8_t _x, uint8_t _y);
+    char32_t getSymbol(const uint32_t _x, const uint32_t _y);
     // Вывод текста на экран
-    void setText(int _x, int _y, COLOR _penColor, COLOR _brushColor, std::u32string _text);
+    void setText(const int _x, const int _y, const COLOR _penColor, const COLOR _brushColor, const std::u32string& _text);
     // Устанавливет режим отображения фона
-    void setBG(bool _flag);
+    void setBG(const bool _flag);
     // Устанавливает видимость курсора
-    void cursorVision(bool _flag);
+    void cursorVision(const bool _flag);
     // Возвращает ширину экрана
     uint8_t getWidth();
     // Возвращает высоту экрана

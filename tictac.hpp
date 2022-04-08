@@ -1,5 +1,5 @@
 #pragma once
-#include "screen.hpp"
+#include "screen.hpp" // Библеотека для работы с графикой в консоли
 
 class CTictac{
 private:
@@ -12,7 +12,7 @@ private:
     для корректной работы в конце строки question должна быть следующая конструкция:
     (a/b) - где 'a' и 'b' это разные латинские символы для вариантов ответа
     Возвращает true если игрок выбрал первый из предложенных символов*/
-    bool questionTemplate(const std::u32string question);
+    bool questionTemplate(const std::u32string& question);
     // Очистка игрового поля
     void clearMap();
     // Вывод на экран приветствие
@@ -34,7 +34,7 @@ private:
     void playPVE();
     // Обработка хода игрока
     // _flagTurn - флаг, показывающий чётный ли ход
-    void inputTurn(bool _flagTurn);
+    void inputTurn(const bool _flagTurn);
     // Обработка хода компьютера
     void calculateTurn();
     // Проверка игрового поля на три символа в ряд
@@ -43,8 +43,8 @@ private:
     char32_t checkWin();
     // Обработка ввода координат
     std::string enterCord();
-    // 
-    std::u32string checkEnterErrors(std::string _data, bool _flagTurn);
+    // Проверка коректности ввода, возвращает текст ошибки
+    std::u32string checkEnterErrors(const std::string& _data, const bool _flagTurn);
 public:
     CTictac();
     ~CTictac();

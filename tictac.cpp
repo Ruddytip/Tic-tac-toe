@@ -1,5 +1,5 @@
 #include "tictac.hpp"
-#include <sstream>
+#include <sstream> // Для обработки вводимой строки
 
 CTictac::CTictac(): symbol(SYMBOLS::EMPTY),
 					enemy(SYMBOLS::EMPTY),
@@ -52,7 +52,7 @@ void CTictac::printMap(){
 	scr.setText(0, 5, COLORS::WHITE, COLORS::BLACK, U"│ │ │ │");
 	scr.setText(0, 6, COLORS::WHITE, COLORS::BLACK, U"└─┴─┴─┘");
 
-	COLOR clr;
+	COLOR clr; // Символы игрока всегда зелёные
 	clr = (symbol == map[0][2] ? COLORS::GREEN : COLORS::RED);
 	scr.setPixel(1, 1, clr, COLORS::BLACK, map[0][2]);	
 	clr = (symbol == map[1][2] ? COLORS::GREEN : COLORS::RED);
@@ -128,7 +128,7 @@ std::string CTictac::enterCord(){
 	return _enterData;
 }
 
-std::u32string CTictac::checkEnterErrors(std::string _data, bool _flagTurn){
+std::u32string CTictac::checkEnterErrors(const std::string& _data, const bool _flagTurn){
 	if(_data.length() != 3)
 		return U"Значения полей указанны не верно";
 	
@@ -148,7 +148,7 @@ std::u32string CTictac::checkEnterErrors(std::string _data, bool _flagTurn){
 	return U"";
 }
 
-void CTictac::inputTurn(bool _flagTurn){
+void CTictac::inputTurn(const bool _flagTurn){
 	while(true){ // Бесконечный цикл, пока игрок не введёт корректные данные
 		std::string move(enterCord());
 		std::u32string error = checkEnterErrors(move, _flagTurn);
@@ -228,7 +228,7 @@ void CTictac::run(){
 	scr.cursorVision(true);
 }
 
-bool CTictac::questionTemplate(const std::u32string question){
+bool CTictac::questionTemplate(const std::u32string& question){
 	std::string input(""), answer[2];
 	std::u32string errorText = U"";
 	answer[0] = question[question.length() - 4]; // Левый символ для ответа
